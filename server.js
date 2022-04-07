@@ -1,29 +1,26 @@
 const express = require("express");
-const app = express();
+const server = express();
 const path = require("path");
 const PORT = 8000;
 
-const r1 = express.Router();
-r1.get("/", (req, res, next) => {
-  console.log("r1: trigger");
+const log = express.Router();
+log.get("/", (req, res, next) => {
+  console.log("log: trigger");
+  console.log(req.originalUrl, req.baseUrl);
   next();
 });
 
-const r2 = express.Router();
-r2.get("/", (req, res, next) => {
-  console.log("r2: trigger");
+const auth = express.Router();
+auth.get("/", (req, res, next) => {
+  console.log("auth: trigger");
   next();
 });
 
-const client1 = express.static(path.join(__dirname, "client1", "build"));
-const client2 = express.static(path.join(__dirname, "client2", "build"));
+const cms = express.static(path.join(__dirname, "cms", "build"));
+const app = express.static(path.join(__dirname, "app", "build"));
 
-if (0) {
-  app.use([r1], client1);
-} else {
-  app.use([r2], client2);
-}
+server.use([log, auth], cms);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server listening on port: ${PORT}`);
 });
